@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>PlayStation 2 — Israel Ueda | Portfólio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Share+Tech+Mono&display=swap"
+    rel="stylesheet" />
+  <link rel="stylesheet" href="./styles.css" />
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js"
+      }
+    }
+  </script>
+</head>
+
+<body class="mode-bios crt-enabled">
+  <!-- Fundo autêntico com transição suave (BIOS Preto/Azul <-> Memory Card Metálico Cinza-Oliva) -->
+  <div class="bg-bios" aria-hidden="true"></div>
+  <div class="bg-memorycard" aria-hidden="true"></div>
+
+  <!-- Canvas WebGL Three.js (Torres, 7 Orbes e Ícones 3D de Memory Card + Orbe Cursor Branco) -->
+  <canvas id="ps2-canvas" aria-label="Cena 3D interativa PlayStation 2"></canvas>
+
+  <!-- Efeito sutil CRT TV de tubo (toggleável em System Configuration) -->
+  <div class="crt-overlay" aria-hidden="true"></div>
+
+  <!-- =========================================================
+       TELA DE BOOT (Ativa o sintetizador Web Audio e inicia o PS2)
+       ========================================================= -->
+  <section id="screen-boot" class="screen active" aria-label="Inicialização PS2">
+    <div class="boot-wrap">
+      <div class="boot-sony-line">SONY COMPUTER ENTERTAINMENT • PORTFOLIO EDITION</div>
+      <h1 class="boot-logo">
+        <span class="boot-ps2-text">PlayStation<span class="boot-two">2</span></span>
+      </h1>
+      <div class="ps2-thin-rule"></div>
+      <p class="boot-profile-line" id="boot-profile-line"></p>
+      <button id="btn-boot-start" class="ps2-text-btn" type="button">
+        <span class="ps-sym ps-x">✕</span>
+        <span>Iniciar Sistema (ENTER)</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       MENU PRINCIPAL (Clássico BIOS PS2: Browser / System Configuration)
+       ========================================================= -->
+  <section id="screen-home" class="screen" aria-label="Menu Principal PS2">
+    <div class="home-top-meta">
+      <span id="home-handle" class="ps2-outline-dim">ISRAEL-OS</span>
+      <span id="live-clock-home" class="ps2-outline-dim">2026/11/26 20:00:00</span>
+    </div>
+
+    <div class="home-stage">
+      <div class="home-left-info">
+        <div class="home-dev-name" id="home-name"></div>
+        <div class="home-dev-role" id="home-role"></div>
+      </div>
+
+      <nav class="ps2-main-menu" aria-label="Menu principal PS2">
+        <button class="menu-item active" data-target="browser" type="button">
+          <span class="menu-label">Browser</span>
+          <span class="menu-hint">Memory Card (PS2) / 1 — Projetos 3D</span>
+        </button>
+
+        <button class="menu-item" data-target="system" type="button">
+          <span class="menu-label">System Configuration</span>
+          <span class="menu-hint">Sobre Mim, Stack, Experiência &amp; Tela</span>
+        </button>
+
+        <button class="menu-item" data-target="version" type="button">
+          <span class="menu-label">Version Information</span>
+          <span class="menu-hint">Currículo, Formação &amp; Exportar PDF</span>
+        </button>
+      </nav>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       BROWSER — MEMORY CARD (PS2)/1 (Fiel à imagem de referência!)
+       ========================================================= -->
+  <section id="screen-browser" class="screen screen-passthrough" aria-label="Memory Card Projetos">
+    <!-- Topo flutuante sem caixas: esquerda Memory Card + Free KB | centro ▲ | direita Título amarelo -->
+    <header class="mc-osd-header">
+      <div class="mc-osd-left">
+        <div class="mc-osd-title">Memory Card <span class="mc-osd-ps2">(PS2)</span> / 1</div>
+        <div class="mc-osd-free" id="mc-free-space">3,520 KB Free</div>
+      </div>
+
+      <div class="mc-osd-center" aria-hidden="true">
+        <span class="mc-scroll-arrow">▲</span>
+      </div>
+
+      <div class="mc-osd-right">
+        <div class="mc-save-title" id="preview-title">PS2 OS Portfolio</div>
+        <div class="mc-save-subtitle" id="preview-subtitle">WebGL 3D Memory Card</div>
+        <div class="mc-save-meta" id="preview-meta">512 KB • 2026/11/26</div>
+      </div>
+    </header>
+
+    <!-- Setas discretas nas laterais para navegação rápida por clique/toque -->
+    <div id="mc-quick-arrows" class="mc-quick-arrows">
+      <button id="btn-prev-block" class="mc-edge-arrow" type="button" aria-label="Save anterior">◀</button>
+      <button id="btn-next-block" class="mc-edge-arrow" type="button" aria-label="Próximo save">▶</button>
+    </div>
+
+    <!-- Dica sutil no modo inspeção 3D -->
+    <div id="inspect-drag-hint" class="inspect-drag-hint" hidden>
+      Arraste sobre o ícone 3D para girar
+    </div>
+
+    <!-- Tela de Detalhes do Save / Projeto (ao pressionar ✕ Enter ou clicar no ícone selecionado) -->
+    <aside id="project-inspect" class="ps2-save-detail" aria-label="Detalhes do Projeto" hidden>
+      <div class="detail-top">
+        <div class="detail-title" id="inspect-title"></div>
+        <div class="detail-subtitle" id="inspect-subtitle"></div>
+        <div class="detail-meta-row">
+          <span id="inspect-category"></span>
+          <span id="inspect-size"></span>
+        </div>
+        <div class="ps2-thin-rule"></div>
+      </div>
+
+      <div class="detail-scroll">
+        <p class="detail-desc" id="inspect-desc"></p>
+
+        <div class="detail-label">Destaques</div>
+        <ul class="detail-list" id="inspect-highlights"></ul>
+
+        <div class="detail-label">Tecnologias</div>
+        <div class="detail-tech-line" id="inspect-tech"></div>
+      </div>
+
+      <div class="detail-actions">
+        <a id="inspect-demo-link" class="ps2-action-item primary" href="#" target="_blank" rel="noopener noreferrer">
+          Executar Demo
+        </a>
+        <a id="inspect-repo-link" class="ps2-action-item" href="#" target="_blank" rel="noopener noreferrer">
+          Ver Código (GitHub)
+        </a>
+        <button id="btn-close-inspect" class="ps2-action-item" type="button">
+          Voltar ao Memory Card
+        </button>
+      </div>
+    </aside>
+  </section>
+
+  <!-- =========================================================
+       SYSTEM CONFIGURATION (Sobre Mim, Stack, Experiência, Tela)
+       ========================================================= -->
+  <section id="screen-system" class="screen" aria-label="System Configuration">
+    <div class="osd-panel">
+      <header class="osd-head">
+        <div>
+          <div class="osd-title">System Configuration</div>
+          <div class="osd-sub">Sobre Mim • Habilidades, Experiência &amp; Ajustes</div>
+        </div>
+        <button class="ps2-action-item compact" data-action="go-home" type="button">
+          ○ Voltar
+        </button>
+      </header>
+      <div class="ps2-thin-rule"></div>
+
+      <div class="system-grid">
+        <nav class="system-nav" aria-label="Opções de Sistema">
+          <button class="sys-tab active" data-tab="language" type="button">
+            <span class="sys-tab-name">Language</span>
+            <span class="sys-tab-desc">Linguagens &amp; Stack</span>
+          </button>
+          <button class="sys-tab" data-tab="datetime" type="button">
+            <span class="sys-tab-name">Clock Adjustment</span>
+            <span class="sys-tab-desc">Experiência &amp; Timeline</span>
+          </button>
+          <button class="sys-tab" data-tab="display" type="button">
+            <span class="sys-tab-name">Screen Size</span>
+            <span class="sys-tab-desc">Design, CRT &amp; 4:3</span>
+          </button>
+          <button class="sys-tab" data-tab="network" type="button">
+            <span class="sys-tab-name">Audio &amp; Network</span>
+            <span class="sys-tab-desc">Contato, Redes &amp; Som</span>
+          </button>
+        </nav>
+
+        <div class="system-content" id="system-content"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       VERSION INFORMATION (Currículo / CV)
+       ========================================================= -->
+  <section id="screen-version" class="screen" aria-label="Version Information">
+    <div class="osd-panel version-panel">
+      <header class="osd-head">
+        <div>
+          <div class="osd-title">Version Information</div>
+          <div class="osd-sub">Currículo &amp; Especificações do Desenvolvedor</div>
+        </div>
+        <button class="ps2-action-item compact" data-action="go-home" type="button">
+          ○ Voltar
+        </button>
+      </header>
+      <div class="ps2-thin-rule"></div>
+
+      <div class="version-body" id="version-body"></div>
+
+      <div class="version-actions">
+        <button id="btn-print-cv" class="ps2-action-item primary" type="button">
+          Imprimir / Salvar Currículo (PDF)
+        </button>
+        <button id="btn-copy-email-cv" class="ps2-action-item" type="button">
+          Copiar E-mail
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- =========================================================
+       RODAPÉ DE PROMPTS PS2 (Centralizado fiel à imagem: ✕ Enter  ○ Back  △ Options)
+       ========================================================= -->
+  <footer id="ps2-footer" class="ps2-footer" aria-label="Controles PS2">
+    <div class="ps2-prompts-center">
+      <button id="hud-confirm" class="prompt-item" type="button">
+        <span class="ps-sym ps-x" aria-hidden="true">✕</span>
+        <span id="hud-confirm-label">Enter</span>
+      </button>
+
+      <button id="hud-back" class="prompt-item" type="button">
+        <span class="ps-sym ps-o" aria-hidden="true">○</span>
+        <span id="hud-back-label">Back</span>
+      </button>
+
+      <button id="hud-version" class="prompt-item" type="button">
+        <span class="ps-sym ps-tri" aria-hidden="true">△</span>
+        <span id="hud-version-label">Options</span>
+      </button>
+    </div>
+
+    <button id="hud-audio" class="audio-corner-btn" type="button" title="Alternar áudio (M)">
+      <span class="ps-sym ps-sq" aria-hidden="true">□</span>
+      <span id="hud-audio-label">Sound: ON</span>
+    </button>
+  </footer>
+
+  <!-- Toast discreto -->
+  <div id="ps2-toast" class="ps2-toast" role="status" aria-live="polite"></div>
+
+  <!-- Currículo formatado para impressão PDF -->
+  <div id="print-resume" class="print-only" aria-hidden="true"></div>
+
+  <script type="module" src="./js/main.js"></script>
+</body>
+
+</html>
