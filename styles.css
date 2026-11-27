@@ -9,10 +9,10 @@
   /* Contorno/sombra preta clássica da tipografia do PS2 OSD */
   --ps2-shadow:
     -1.2px -1.2px 0 rgba(0, 0, 0, 0.9),
-     1.2px -1.2px 0 rgba(0, 0, 0, 0.9),
-    -1.2px  1.2px 0 rgba(0, 0, 0, 0.9),
-     1.2px  1.2px 0 rgba(0, 0, 0, 0.9),
-     0px    2px   4px rgba(0, 0, 0, 0.78);
+    1.2px -1.2px 0 rgba(0, 0, 0, 0.9),
+    -1.2px 1.2px 0 rgba(0, 0, 0, 0.9),
+    1.2px 1.2px 0 rgba(0, 0, 0, 0.9),
+    0px 2px 4px rgba(0, 0, 0, 0.78);
 }
 
 *,
@@ -146,13 +146,11 @@ body.crt-enabled .crt-overlay {
 .ps2-thin-rule {
   height: 1px;
   width: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(130, 190, 255, 0.15) 0%,
-    rgba(195, 228, 255, 0.85) 35%,
-    rgba(130, 190, 255, 0.55) 75%,
-    transparent 100%
-  );
+  background: linear-gradient(90deg,
+      rgba(130, 190, 255, 0.15) 0%,
+      rgba(195, 228, 255, 0.85) 35%,
+      rgba(130, 190, 255, 0.55) 75%,
+      transparent 100%);
   margin: 12px 0;
 }
 
@@ -180,10 +178,21 @@ body.crt-enabled .crt-overlay {
   flex-shrink: 0;
 }
 
-.ps-x { color: #8da8ff; }
-.ps-o { color: #f07b7b; }
-.ps-tri { color: #5cd69a; }
-.ps-sq { color: #e88ec4; }
+.ps-x {
+  color: #8da8ff;
+}
+
+.ps-o {
+  color: #f07b7b;
+}
+
+.ps-tri {
+  color: #5cd69a;
+}
+
+.ps-sq {
+  color: #e88ec4;
+}
 
 /* =========================================================
    TELA DE BOOT
@@ -429,8 +438,15 @@ body.crt-enabled .crt-overlay {
 }
 
 @keyframes floatArrow {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
 }
 
 /* Topo Direito: Título e Subtítulo do Save em AMARELO PS2 (#ece563) */
@@ -533,8 +549,15 @@ body.mode-inspecting .mc-osd-right {
 }
 
 @keyframes fadeSlideIn {
-  from { opacity: 0; transform: translateX(16px); }
-  to { opacity: 1; transform: translateX(0); }
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
 .detail-title {
@@ -1193,6 +1216,7 @@ body.mode-inspecting .mc-osd-right {
 }
 
 @media print {
+
   body,
   html {
     background: #fff !important;

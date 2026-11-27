@@ -801,6 +801,12 @@ export class PS2Scene {
     this.renderer.toneMappingExposure = 0.88 + value * 0.22;
   }
 
+  rotateInspect(dx, dy) {
+    if (this.mode !== 'inspect') return;
+    this.inspectRotY += dx;
+    this.inspectRotX = Math.max(-0.9, Math.min(0.9, this.inspectRotX + dy));
+  }
+
   getGridCols() {
     return this.gridCols;
   }

@@ -8,6 +8,7 @@ import {
 } from './data.js';
 import { PS2Audio } from './audio.js';
 import { PS2Scene } from './scene.js';
+import { PS2Gamepad } from './gamepad.js';
 
 /**
  * Controlador principal do PS2 OS Portfolio
@@ -33,6 +34,7 @@ class PS2PortfolioApp {
     this._cacheDOM();
     this._populateStaticContent();
     this._initScene();
+    this._initGamepad();
     this._bindUIEvents();
     this._bindKeyboard();
     this._startClock();
@@ -130,6 +132,115 @@ class PS2PortfolioApp {
         }
       },
     });
+  }
+
+  _initGamepad() {
+    this.gamepad = new PS2Gamepad({
+      onConnect: (name) => {
+        this.showToast(`Controle conectado: ${name}`);
+      },
+      onDisconnect: () => {
+        this.showToast('Controle desconectado');
+      },
+      onConfirm: () => {
+        this._handleConfirmAction();
+      },
+      onBack: () => {
+        this._handleBackAction();
+      },
+      onVersion: () => {
+        if (this.currentScreen === 'boot') {
+          this.bootSystem();
+          return;
+        }
+        if (this.currentScreen === 'version') {
+          this.audio.playBack();
+          this.navigateTo('home');
+        } else {
+          this.closeProjectInspect(true);
+          this.audio.playConfirm();
+          this.navigateTo('version');
+        }
+      },
+      onToggleAudio: () => {
+        const muted = this.audio.toggleMute();
+        this._updateAudioLabel(muted);
+        this.showToast(muted ? 'Sound: OFF' : 'Sound: ON');
+      },
+      onPrev: () => {
+        if (this.currentScreen === 'browser') {
+          this.moveBrowserSelection(-1);
+          if (this.isInspecting) this._populateInspectPanel();
+        } else if (this.currentScreen === 'system') {
+          this._switchSystemTabByDelta(-1);
+        }
+      },
+      onNext: () => {
+        if (this.currentScreen === 'browser') {
+          this.moveBrowserSelection(1);
+          if (this.isInspecting) this._populateInspectPanel();
+        } else if (this.currentScreen === 'system') {
+          this._switchSystemTabByDelta(1);
+        }
+      },
+      onDirection: (dir) => {
+        if (this.currentScreen === 'home') {
+          if (dir === 'down') {
+            this.setHomeIndex((this.homeIndex + 1) % this.menuItems.length);
+            this.audio.playMove();
+          } else if (dir === 'up') {
+            this.setHomeIndex(
+              (this.homeIndex - 1 + this.menuItems.length) % this.menuItems.length
+            );
+            this.audio.playMove();
+          }
+          return;
+        }
+
+        if (this.currentScreen === 'browser') {
+          if (this.isInspecting) {
+            if (dir === 'right') {
+              this.moveBrowserSelection(1);
+              this._populateInspectPanel();
+            } else if (dir === 'left') {
+              this.moveBrowserSelection(-1);
+              this._populateInspectPanel();
+            }
+            return;
+          }
+
+          const cols = this.scene3D.getGridCols();
+          if (dir === 'right') this.moveBrowserSelection(1);
+          else if (dir === 'left') this.moveBrowserSelection(-1);
+          else if (dir === 'down') this.moveBrowserSelection(cols);
+          else if (dir === 'up') this.moveBrowserSelection(-cols);
+          return;
+        }
+
+        if (this.currentScreen === 'system') {
+          if (dir === 'down' || dir === 'right') this._switchSystemTabByDelta(1);
+          else if (dir === 'up' || dir === 'left') this._switchSystemTabByDelta(-1);
+        }
+      },
+      onRightStick: (rx, ry) => {
+        if (this.currentScreen === 'browser' && this.isInspecting) {
+          this.scene3D.rotateInspect(rx * 0.055, ry * 0.04);
+        } else if (this.currentScreen === 'system' && this.systemContent) {
+          this.systemContent.scrollTop += ry * 12;
+        } else if (this.currentScreen === 'version' && this.versionBody) {
+          this.versionBody.scrollTop += ry * 12;
+        }
+      },
+    });
+  }
+
+  _switchSystemTabByDelta(delta) {
+    const order = ['language', 'datetime', 'display', 'network'];
+    const idx = order.indexOf(this.activeSystemTab);
+    const next = order[(idx + delta + order.length) % order.length];
+    this.activeSystemTab = next;
+    this.audio.playMove();
+    this._renderSystemTab(next);
   }
 
   _bindUIEvents() {

@@ -49,6 +49,7 @@ curriculo_ps2/
 ├── js/
 │   ├── main.js     # Controlador de estado, navegação por teclado/mouse e renderização dinâmica
 │   ├── scene.js    # Motor 3D Three.js (torres, 7 orbes, ícones 3D do Memory Card e raycasting)
+│   ├── gamepad.js  # Suporte nativo a controles físicos via Gamepad API (USB / Bluetooth)
 │   ├── audio.js    # Sintetizador procedural Web Audio API
 │   └── data.js     # Dados centralizados (perfil, projetos, habilidades, experiência e currículo)
 └── README.md
@@ -58,14 +59,15 @@ curriculo_ps2/
 
 ## Controles
 
-| Ação | Teclado | Mouse / Toque |
-| :--- | :--- | :--- |
-| Navegar no menu / grade 3D | `↑` `↓` `←` `→` ou `W` `A` `S` `D` | Mover ponteiro / setas laterais |
-| Confirmar / Inspecionar bloco (`✕`) | `Enter` | Clique no item / bloco 3D |
-| Voltar (`○`) | `Esc` ou `Backspace` | Botão `○ Back` no rodapé |
-| Version Information / Currículo (`△`) | `T` | Botão `△ Options / Version` |
-| Ativar / Silenciar Áudio (`□`) | `M` | Botão `□ Sound` no canto inferior direito |
-| Girar ícone 3D (modo inspeção) | — | Clicar e arrastar sobre o modelo 3D |
+| Ação | Teclado | Controle (Gamepad API) | Mouse / Toque |
+| :--- | :--- | :--- | :--- |
+| Navegar no menu / grade 3D | `↑` `↓` `←` `→` ou `W` `A` `S` `D` | D-Pad ou Analógico Esquerdo | Mover ponteiro / setas laterais |
+| Confirmar / Inspecionar bloco (`✕`) | `Enter` | `✕` (PS) / `A` (Xbox) / `Start` | Clique no item / bloco 3D |
+| Voltar (`○`) | `Esc` ou `Backspace` | `○` (PS) / `B` (Xbox) | Botão `○ Back` no rodapé |
+| Version Information / Currículo (`△`) | `T` | `△` (PS) / `Y` (Xbox) | Botão `△ Options / Version` |
+| Ativar / Silenciar Áudio (`□`) | `M` | `□` (PS) / `X` (Xbox) | Botão `□ Sound` no canto inferior direito |
+| Trocar projeto / aba rapidamente | `←` `→` | `L1` / `R1` (ou `LB` / `RB`) | Setas / clique |
+| Girar ícone 3D (modo inspeção) | — | Analógico Direito | Clicar e arrastar sobre o modelo 3D |
 
 ---
 
