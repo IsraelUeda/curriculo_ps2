@@ -21,6 +21,10 @@
   box-sizing: border-box;
 }
 
+[hidden] {
+  display: none !important;
+}
+
 html,
 body {
   margin: 0;
@@ -278,13 +282,26 @@ body.crt-enabled .crt-overlay {
   gap: 24px;
 }
 
-.home-left-info {
-  align-self: end;
-  padding-bottom: 30px;
+.home-orb-spacer {
+  pointer-events: none;
+}
+
+.home-menu-column {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-self: center;
+  width: min(460px, 100%);
+}
+
+.home-identity {
+  width: 100%;
+  padding-left: 10px;
+  margin-bottom: 14px;
 }
 
 .home-dev-name {
-  font-size: clamp(1.35rem, 2.5vw, 1.85rem);
+  font-size: clamp(1.45rem, 2.6vw, 1.95rem);
   font-weight: 600;
   color: #eef4fa;
   text-shadow: var(--ps2-shadow);
@@ -292,7 +309,7 @@ body.crt-enabled .crt-overlay {
 
 .home-dev-role {
   font-size: 0.96rem;
-  color: rgba(196, 216, 238, 0.82);
+  color: rgba(196, 216, 238, 0.85);
   text-shadow: var(--ps2-shadow);
   margin-top: 3px;
 }
@@ -300,9 +317,9 @@ body.crt-enabled .crt-overlay {
 .ps2-main-menu {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 18px;
   align-items: flex-start;
-  justify-self: center;
+  width: 100%;
 }
 
 .menu-item {
@@ -419,6 +436,11 @@ body.crt-enabled .crt-overlay {
 /* Topo Direito: Título e Subtítulo do Save em AMARELO PS2 (#ece563) */
 .mc-osd-right {
   text-align: right;
+  transition: opacity 0.2s ease;
+}
+
+body.mode-inspecting .mc-osd-right {
+  opacity: 0;
 }
 
 .mc-save-title {
@@ -1116,8 +1138,8 @@ body.crt-enabled .crt-overlay {
     align-content: center;
   }
 
-  .home-left-info {
-    padding-bottom: 8px;
+  .home-orb-spacer {
+    display: none;
   }
 
   .mc-osd-header {

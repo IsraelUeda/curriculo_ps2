@@ -374,6 +374,7 @@ class PS2PortfolioApp {
     this._populateInspectPanel();
     this.inspectPanel.hidden = false;
     this.inspectDragHint.hidden = false;
+    document.body.classList.add('mode-inspecting');
     this.mcQuickArrows.classList.add('hidden-arrows');
     this.scene3D.setMode('inspect');
     this.audio.playConfirm();
@@ -385,6 +386,7 @@ class PS2PortfolioApp {
     this.isInspecting = false;
     this.inspectPanel.hidden = true;
     this.inspectDragHint.hidden = true;
+    document.body.classList.remove('mode-inspecting');
     this.mcQuickArrows.classList.remove('hidden-arrows');
     if (this.currentScreen === 'browser') {
       this.scene3D.setMode('browser');
